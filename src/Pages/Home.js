@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { Container, Content, Spinner, Text, ActionSheet } from 'native-base';
+import { Container, Content, Spinner, Text, ActionSheet, StyleProvider } from 'native-base';
+import getTheme from '../../native-base-theme/components';
+import material from '../../native-base-theme/variables/material';
  
 import { withFirebase } from '../Firebase/index'
 import TopBar from '../Components/Bars/TopBar'
@@ -257,7 +259,7 @@ class Home extends Component {
                         </Container>
         }
 
-        return container
+        return <StyleProvider style={getTheme(material)}>{container}</StyleProvider>
     }
 }
 

@@ -150,7 +150,7 @@ class LoanHistory extends Component {
                 <TopBar title="Empréstimos"
                         back={this.goBack}
                         hasTabs/>
-                <Tabs renderTabBar={()=> <ScrollableTab />}>
+                <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
                     <Tab heading={"Chaves"}>
                         <Content>
                             <LoansList loanDates={this.state.keys}

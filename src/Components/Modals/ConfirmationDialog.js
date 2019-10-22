@@ -7,7 +7,7 @@ const confirmationDialog = (title, message, actionText, action) => {
         message,
         [
             {
-                text: 'Cancel',
+                text: 'Cancelar',
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },

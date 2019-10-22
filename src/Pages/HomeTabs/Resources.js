@@ -172,7 +172,7 @@ class Resources extends Component {
 
         if(!this.state.isWaiting) {
             if(placesTabs.length > 0){
-                content =   <Tabs renderTabBar={()=> <ScrollableTab />}>
+                content =   <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
                                 {placesTabs}
                             </Tabs>
             }

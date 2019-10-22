@@ -6,7 +6,7 @@ const loanDialog = (title, message, actionText, action, resource, target) => {
         message,
         [
             {
-                text: 'Cancel',
+                text: 'Cancelar',
                 onPress: () => console.log('Cancel Pressed'),
                 style: 'cancel',
             },

@@ -204,7 +204,7 @@ class Requests extends Component {
                 <TopBar title="Solicitações"
                         back={this.goBack}
                         hasTabs/>
-                <Tabs renderTabBar={()=> <ScrollableTab />}>
+                <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
                     <Tab heading={"Chaves"}>
                         <Content>
                             <RequestsList requests={this.state.keys}
