@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "971764024469",
+    "firebase_url": "https://app-smd.firebaseio.com",
+    "project_id": "app-smd",
+    "storage_bucket": "app-smd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971764024469:android:998f407678764746f5c79c",
+        "android_client_info": {
+          "package_name": "com.smd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971764024469-95r986srvanbdruj3ups47fbi7t7mp7a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxz1syZSsA1Grv39j4QqCj-uDt_6ERlR0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971764024469-95r986srvanbdruj3ups47fbi7t7mp7a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
