@@ -1,5 +1,5 @@
 import React from 'react'
-import { List, ListItem, Body, Text, Right, Badge } from 'native-base'
+import { List, ListItem, Body, Text } from 'native-base'
 
 const requestsList = props => {
     let requestsList = []

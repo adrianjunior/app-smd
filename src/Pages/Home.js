@@ -30,11 +30,12 @@ const USER_CANCEL_INDEX = 3;
 
 const ADMIN_BUTTONS = [
     { text: "Empréstimos", icon: "list-box", page: "Loans" },
+    { text: "Solicitações", icon: "text", page: "Requests" },
     { text: "Alterar Senha", icon: "lock", page: "Password" }, 
     { text: "Sair", icon: "log-out", page: "Logout" },
     { text: "Cancelar", icon: "close" }
   ];
-const ADMIN_CANCEL_INDEX = 3;
+const ADMIN_CANCEL_INDEX = 4;
 
 class Home extends Component {
     constructor(props){
@@ -208,12 +209,14 @@ class Home extends Component {
                 active = [true, false, false, false]
                 break;
             case 1:
+                topBar = <TopBar title="Chaves" hasTabs/>
                 content = <Keys user={this.state.user}
                                 userInfo={this.state.userInfo}
                                 changePage={this.changePage}/>
                 active = [false, true, false, false]
                 break;
             case 2:
+                topBar = <TopBar title="Recursos" hasTabs/>
                 content = <Resources user={this.state.user}
                                      userInfo={this.state.userInfo}
                                      changePage={this.changePage}/>
@@ -223,12 +226,12 @@ class Home extends Component {
                 active = [false, false, false, true]
                 if(this.state.user == 0) {
                     topBar = <TopBar title="Login"/>
-                    content = <Login email={this.state.email}
-                                     password={this.state.password}
-                                     error={this.state.error}
-                                     onChangeEmail={this.onChangeEmail}
-                                     onChangePassword={this.onChangePassword}
-                                     onLogin={this.onLogin}/>
+                    content =   <Login email={this.state.email}
+                                       password={this.state.password}
+                                       error={this.state.error}
+                                       onChangeEmail={this.onChangeEmail}
+                                       onChangePassword={this.onChangePassword}
+                                       onLogin={this.onLogin}/>
                 }
                 break;
         }
@@ -239,9 +242,7 @@ class Home extends Component {
         if(!this.state.isLoading) {
             container = <Container>
                             {topBar}
-                            <Content>
-                                {content}
-                            </Content>
+                            <Content>{content}</Content>
                             <BottomBar  action={this.changePage}
                                         active={active}
                                         user={this.state.user}/>

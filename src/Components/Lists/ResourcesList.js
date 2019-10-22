@@ -1,5 +1,5 @@
 import React from 'react'
-import { List, ListItem, Body, Text, Right, Badge } from 'native-base'
+import { List, ListItem, Body, Text, Right, Badge, Content } from 'native-base'
 
 const resourcesList = props => {
     let resourcesList = []
@@ -36,9 +36,11 @@ const resourcesList = props => {
     }
     console.log(resourcesList)
     return(
-        <List>
-            {resourcesList}
-        </List>
+        <Content>
+            <List>
+                {resourcesList}
+            </List>
+        </Content>
     )
 }
 

@@ -24,6 +24,9 @@ class Rooms extends Component {
                     if(data.status === "false") {
                         data.status = false
                     }
+                    if(data.status === "true") {
+                        data.status = true
+                    }
                     this.rooms[data.name] = {name: data.name,
                                              status: data.status,
                                              nowLesson: undefined,
