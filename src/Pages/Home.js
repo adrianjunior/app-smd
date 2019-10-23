@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { Container, Content, Spinner, Text, ActionSheet } from 'native-base';
+import { Container, Content, Spinner, Text, ActionSheet, StyleProvider, Toast } from 'native-base';
+import getTheme from '../../native-base-theme/components';
+import material from '../../native-base-theme/variables/material';
  
 import { withFirebase } from '../Firebase/index'
 import TopBar from '../Components/Bars/TopBar'
@@ -9,6 +11,7 @@ import Resources from './HomeTabs/Resources'
 import Login from './HomeTabs/Login'
 import BottomBar from '../Components/Bars/BottomBar'
 import confirmationDialog from '../Components/Modals/ConfirmationDialog'
+import showSnackbar from '../Components/Modals/Snackbar'
 
 const INITIAL_STATE = {
     user: 0,
@@ -21,20 +24,21 @@ const INITIAL_STATE = {
 };
 
 const USER_BUTTONS = [
-    { text: "Solicitações de Chave/Recurso", icon: "swap", page: "Swap" },
-    { text: "Alterar Senha", icon: "lock", page: "Password" }, 
-    { text: "Sair", icon: "log-out", page: "Logout" },
-    { text: "Cancelar", icon: "close" }
+    { text: "Solicitações de Chave/Recurso", icon: "swap", page: "Swap", iconColor: "#006CB4" },
+    { text: "Alterar Senha", icon: "lock", page: "Password", iconColor: "#006CB4" }, 
+    { text: "Sair", icon: "log-out", page: "Logout", iconColor: "#d9534f" },
+    { text: "Cancelar", icon: "close", iconColor: "#006CB4" }
   ];
 const USER_CANCEL_INDEX = 3;
 
 const ADMIN_BUTTONS = [
-    { text: "Empréstimos", icon: "list-box", page: "Loans" },
-    { text: "Alterar Senha", icon: "lock", page: "Password" }, 
-    { text: "Sair", icon: "log-out", page: "Logout" },
-    { text: "Cancelar", icon: "close" }
+    { text: "Empréstimos", icon: "list-box", page: "Loans", iconColor: "#006CB4" },
+    { text: "Solicitações", icon: "text", page: "Requests", iconColor: "#006CB4" },
+    { text: "Alterar Senha", icon: "lock", page: "Password", iconColor: "#006CB4" }, 
+    { text: "Sair", icon: "log-out", page: "Logout", iconColor: "#d9534f" },
+    { text: "Cancelar", icon: "close", iconColor: "#006CB4" }
   ];
-const ADMIN_CANCEL_INDEX = 3;
+const ADMIN_CANCEL_INDEX = 4;
 
 class Home extends Component {
     constructor(props){
@@ -89,8 +93,7 @@ class Home extends Component {
           })
           .catch(error => {
             this.setState({ isLoading: false, loadingText: 'Logando...' });
-            console.log(error)  
-            //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
           });
     }
 
@@ -107,7 +110,11 @@ class Home extends Component {
         this.props.firebase.signOut()
         .then(() => {
             this.setState({user: 0, active: 0})
-            //Adicionar uma Snackbar
+            console.log('teste')
+            showSnackbar('Você saiu da conta com sucesso!', 'OK')
+        })
+        .catch(error => {
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK') //Traduzir o erro
         })
     }
 
@@ -144,7 +151,7 @@ class Home extends Component {
                         })
                 }
             }, error => {
-                console.log(error)
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
     }
 
@@ -162,10 +169,10 @@ class Home extends Component {
         this.props.firebase
         .resetPassword(this.state.userInfo.email)
         .then(() => {
-            //Snackbar deu certo
+            showSnackbar('Email enviado. Cheque seu email.', 'OK')
         })
         .catch(error => {
-            //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -208,12 +215,14 @@ class Home extends Component {
                 active = [true, false, false, false]
                 break;
             case 1:
+                topBar = <TopBar title="Chaves" hasTabs/>
                 content = <Keys user={this.state.user}
                                 userInfo={this.state.userInfo}
                                 changePage={this.changePage}/>
                 active = [false, true, false, false]
                 break;
             case 2:
+                topBar = <TopBar title="Recursos" hasTabs/>
                 content = <Resources user={this.state.user}
                                      userInfo={this.state.userInfo}
                                      changePage={this.changePage}/>
@@ -223,12 +232,12 @@ class Home extends Component {
                 active = [false, false, false, true]
                 if(this.state.user == 0) {
                     topBar = <TopBar title="Login"/>
-                    content = <Login email={this.state.email}
-                                     password={this.state.password}
-                                     error={this.state.error}
-                                     onChangeEmail={this.onChangeEmail}
-                                     onChangePassword={this.onChangePassword}
-                                     onLogin={this.onLogin}/>
+                    content =   <Login email={this.state.email}
+                                       password={this.state.password}
+                                       error={this.state.error}
+                                       onChangeEmail={this.onChangeEmail}
+                                       onChangePassword={this.onChangePassword}
+                                       onLogin={this.onLogin}/>
                 }
                 break;
         }
@@ -239,13 +248,11 @@ class Home extends Component {
         if(!this.state.isLoading) {
             container = <Container>
                             {topBar}
-                            <Content>
-                                {content}
-                            </Content>
+                            <Content>{content}</Content>
                             <BottomBar  action={this.changePage}
                                         active={active}
                                         user={this.state.user}/>
-                            <ActionSheet ref={(c) => { this.actionSheet = c; }} />
+                            <ActionSheet style={{backgroundColor: '#212121'}} ref={(c) => { this.actionSheet = c; }} />
                         </Container>
         } else {
             container = <Container>
@@ -256,7 +263,7 @@ class Home extends Component {
                         </Container>
         }
 
-        return container
+        return <StyleProvider style={getTheme(material)}>{container}</StyleProvider>
     }
 }
 

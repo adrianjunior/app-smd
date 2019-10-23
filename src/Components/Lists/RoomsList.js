@@ -1,5 +1,16 @@
 import React from 'react'
-import { List, ListItem, Body, Text, Right, Badge } from 'native-base'
+import { StyleSheet } from 'react-native'
+import { List, ListItem, Body, Text, Right, Badge, H3 } from 'native-base'
+
+const styles = StyleSheet.create({
+    title: {
+        color: '#006CB4',
+        fontSize: 18,
+    },
+    bold: {
+        fontWeight: 'bold',
+    }
+  });
 
 const roomsList = props => {
     let roomsList = []
@@ -8,17 +19,17 @@ const roomsList = props => {
             roomsList.push(
                 <ListItem button onPress={() => props.go('Room', {room: room})}>
                         <Body>
-                            <Text>{room.name}</Text>
+                            <Text style={[styles.title, styles.bold]}>{room.name}</Text>
                             {
                                 room.nowLesson != undefined ?
                                 <Text>
-                                    {room.nowLesson.startTime} às {room.nowLesson.endTime} - {room.nowLesson.name}
+                                    {room.nowLesson.startTime} às {room.nowLesson.endTime} - <Text style={styles.bold}>{room.nowLesson.name}</Text>
                                 </Text> : null
                             }
                             {
                                 room.nowLesson != undefined ?
                                 <Text>
-                                    Responsável(eis): {room.nowLesson.teacher}
+                                    Responsável(eis): <Text style={styles.bold}>{room.nowLesson.teacher}</Text>
                                 </Text> : null
                             }
                         </Body>

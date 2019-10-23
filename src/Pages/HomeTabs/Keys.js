@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tab, Tabs, ScrollableTab, Spinner, Text, Button } from 'native-base'
+import { Tab, Tabs, ScrollableTab, Spinner, Text, Button, Content } from 'native-base'
 import moment from "moment/min/moment-with-locales";
 
 import TopBar from '../../Components/Bars/TopBar'
@@ -7,6 +7,7 @@ import ResourcesList from '../../Components/Lists/ResourcesList'
 import loanDialog from '../../Components/Modals/LoanDialog'
 import loginDialog from '../../Components/Modals/LoginDialog'
 import { withFirebase } from '../../Firebase/index'
+import showSnackbar from '../../Components/Modals/Snackbar'
 
 class Keys extends Component {
     constructor(props){
@@ -27,6 +28,12 @@ class Keys extends Component {
                 querySnapshot.forEach(doc => {
                     const id = doc.id;
                     const data = doc.data();
+                    if(data.status === "false") {
+                        data.status = false
+                    }
+                    if(data.status === "true") {
+                        data.status = true
+                    }
                     if(keys[data.place] == undefined){
                         keys[data.place] = []
                     }
@@ -34,7 +41,7 @@ class Keys extends Component {
                 });
                 this.setState({keys: keys})
         }, error => {
-            this.setState({ error });
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -169,15 +176,12 @@ class Keys extends Component {
             ))
         }
 
-        if(!this.state.isWaiting){
-            content =   <>
-                            <TopBar title="Chaves" hasTabs/>
-                            {placesTabs.length > 0 ?
-                                <Tabs renderTabBar={()=> <ScrollableTab />}>
-                                    {placesTabs}
-                                </Tabs> : null
-                            }
-                        </>
+        if(!this.state.isWaiting) {
+            if(placesTabs.length > 0){
+                content =   <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
+                                {placesTabs}
+                            </Tabs>
+            }
         } else {
             content =   <>
                             <Spinner/>

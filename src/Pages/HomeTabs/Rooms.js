@@ -3,6 +3,7 @@ import moment from "moment/min/moment-with-locales";
 
 import RoomsList from '../../Components/Lists/RoomsList'
 import { withFirebase } from '../../Firebase/index';
+import showSnackbar from '../../Components/Modals/Snackbar'
 
 class Rooms extends Component {
     constructor(props){
@@ -23,6 +24,9 @@ class Rooms extends Component {
                     const data = doc.data();
                     if(data.status === "false") {
                         data.status = false
+                    }
+                    if(data.status === "true") {
+                        data.status = true
                     }
                     this.rooms[data.name] = {name: data.name,
                                              status: data.status,
@@ -68,10 +72,10 @@ class Rooms extends Component {
                         });
                         this.setState({rooms: this.rooms})
                 }, error => {
-                    this.setState({ error });
+                    showSnackbar('Algo deu errado. Tente novamente.', 'OK')
                 })
             }, error => {
-                this.setState({ error });
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
     }
 

@@ -75,6 +75,10 @@ class Firebase {
 
   getResourceRequest = (requestId, place)  => this.firestore.collection(place+'ResourceRequests').doc(requestId)
 
+  getKeyRequests = place => this.firestore.collection(place+'KeyRequests').orderBy("timestamp", "desc")
+
+  getResourceRequests = place => this.firestore.collection(place+'ResourceRequests').orderBy("timestamp", "desc")
+
   /* LOAN REQUESTS TO USERS */
 
   addKeyRequestToUser = (request, userId) => this.firestore.collection('users').doc(userId).collection('keyRequests').add(request)
@@ -178,8 +182,9 @@ class Firebase {
   updateResourceDeletingUser = resourceId =>
     this.firestore.collection('resources').doc(resourceId).update({
       status: true,
-      user: this.firebase.firestore.FieldValue.delete(),
-      userId: this.firebase.firestore.FieldValue.delete()
+      user: app.firestore.FieldValue.delete(),
+      userId: app.firestore.FieldValue.delete(),
+      loanId: app.firestore.FieldValue.delete()
     })
 
   /* KEYS */
@@ -205,8 +210,9 @@ class Firebase {
   updateKeyDeletingUser = keyId =>
     this.firestore.collection('keys').doc(keyId).update({
       status: true,
-      user: this.firebase.firestore.FieldValue.delete(),
-      userId: this.firebase.firestore.FieldValue.delete()
+      user: app.firestore.FieldValue.delete(),
+      userId: app.firestore.FieldValue.delete(),
+      loanId: app.firestore.FieldValue.delete()
     })
 
   /* ROOMS */

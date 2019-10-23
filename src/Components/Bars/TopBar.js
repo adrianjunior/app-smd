@@ -12,7 +12,7 @@ const topBar = props => {
                 }
             </Left>
             <Body style={{flex: 4}}>
-                <Title>{props.title}</Title>
+                <Title style={{fontWeight: 'bold'}}>{props.title}</Title>
             </Body>
             <Right style={{flex: 0.1}}/>
         </Header>

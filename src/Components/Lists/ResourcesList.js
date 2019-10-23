@@ -1,5 +1,16 @@
 import React from 'react'
-import { List, ListItem, Body, Text, Right, Badge } from 'native-base'
+import { StyleSheet } from 'react-native'
+import { List, ListItem, Body, Text, Right, Badge, Content } from 'native-base'
+
+const styles = StyleSheet.create({
+    title: {
+        color: '#006CB4',
+        fontSize: 18,
+    },
+    bold: {
+        fontWeight: 'bold',
+    }
+  });
 
 const resourcesList = props => {
     let resourcesList = []
@@ -10,7 +21,7 @@ const resourcesList = props => {
                 resourcesList.push(
                     <ListItem button onPress={() => props.swap(resource)}>
                         <Body>
-                            <Text>{resource.name}</Text>
+                            <Text style={[styles.title, styles.bold]}>{resource.name}</Text>
                             {
                                 resource.user != undefined ?
                                 <Text>Usuário: {resource.user}</Text> : null
@@ -22,7 +33,7 @@ const resourcesList = props => {
                 resourcesList.push(
                     <ListItem button onPress={() => props.loan(resource)}>
                         <Body>
-                            <Text>{resource.name}</Text>
+                            <Text style={[styles.title, styles.bold]}>{resource.name}</Text>
                         </Body>
                         <Right>
                             <Badge success>
@@ -36,9 +47,11 @@ const resourcesList = props => {
     }
     console.log(resourcesList)
     return(
-        <List>
-            {resourcesList}
-        </List>
+        <Content>
+            <List>
+                {resourcesList}
+            </List>
+        </Content>
     )
 }
 
