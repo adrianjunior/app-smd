@@ -7,6 +7,7 @@ import ResourcesList from '../../Components/Lists/ResourcesList'
 import loanDialog from '../../Components/Modals/LoanDialog'
 import loginDialog from '../../Components/Modals/LoginDialog'
 import { withFirebase } from '../../Firebase/index'
+import showSnackbar from '../../Components/Modals/Snackbar'
 
 class Keys extends Component {
     constructor(props){
@@ -16,7 +17,6 @@ class Keys extends Component {
     state = {
         user: 0,
         active: 0,
-        isLoading: false,
         isWaiting: false
     }
 
@@ -40,7 +40,7 @@ class Keys extends Component {
                 });
                 this.setState({keys: keys})
         }, error => {
-            this.setState({ error });
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -92,7 +92,8 @@ class Keys extends Component {
             this.setState({keyPlace: key.place})
             this.props.firebase.addKeyRequest(request, key.place)
             .then(request => {
-                this.setState({isWaiting: true, requestId: request.id, target: target})
+                this.setState({requestId: request.id, target: target})
+                this.props.loading('Aguardando Resposta...', this.cancelRequest, target)
                 this.checkRequestAnswered(target)
             })
         } else if (target == 1){
@@ -100,7 +101,8 @@ class Keys extends Component {
             request.loanId = key.loanId
             this.props.firebase.addKeyRequestToUser(request, key.userId)
             .then(request => {
-                this.setState({isWaiting: true, requestId: request.id, target: target})
+                this.setState({requestId: request.id, target: target})
+                this.props.loading('Aguardando Resposta...', this.cancelRequest, target)
                 this.checkRequestAnswered(target)
             })
         }
@@ -110,13 +112,15 @@ class Keys extends Component {
         if(target == 0) {
             this.props.firebase.deleteKeyRequest(this.state.requestId, this.state.keyPlace)
             .then(() => {
-                this.setState({isWaiting: false, requestId: false, target: null, keyPlace: null})
+                this.setState({ requestId: false, target: null, keyPlace: null})
+                this.props.cancelLoading()
                 this.requestListener()
             })
         } else if (target == 1){
             this.props.firebase.deleteKeyRequestToUser(this.state.requestId, this.state.keyUserId)
             .then(() => {
-                this.setState({isWaiting: false, requestId: false, target: null, keyUserId: null})
+                this.setState({requestId: false, target: null, keyUserId: null})
+                this.props.cancelLoading()
                 this.requestListener()
             })
         }
@@ -128,7 +132,8 @@ class Keys extends Component {
             this.requestListener = this.props.firebase.getKeyRequest(this.state.requestId, this.state.keyPlace)
             .onSnapshot(querySnapshot => {
                 if(!querySnapshot.exists) {
-                    this.setState({isWaiting: false, requestId: false, keyPlace: null})
+                    this.setState({requestId: false, keyPlace: null})
+                    this.props.cancelLoading()
                     this.requestListener()
                     //Resposta da solicitação
                 }
@@ -140,7 +145,8 @@ class Keys extends Component {
             .onSnapshot(querySnapshot => {
                 console.log(querySnapshot)
                 if(!querySnapshot.exists) {
-                    this.setState({isWaiting: false, requestId: false, keyUserId: null})
+                    this.setState({requestId: false, keyUserId: null})
+                    this.props.cancelLoading()
                     this.requestListener()
                     //Resposta da solicitação
                 }
@@ -175,18 +181,10 @@ class Keys extends Component {
             ))
         }
 
-        if(!this.state.isWaiting) {
-            if(placesTabs.length > 0){
-                content =   <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
-                                {placesTabs}
-                            </Tabs>
-            }
-        } else {
-            content =   <>
-                            <Spinner/>
-                            <Text>Esperando Confirmação</Text>
-                            <Button onPress={() => this.cancelRequest(this.state.target)} danger><Text> Cancelar Solicitação </Text></Button>
-                        </>
+        if(placesTabs.length > 0){
+            content =   <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#006CB4' }}/>}>
+                            {placesTabs}
+                        </Tabs>
         }
 
         return (

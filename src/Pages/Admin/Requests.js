@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Tabs, Tab, ScrollableTab, Content } from 'native-base'
+import { Container, Tabs, Tab, ScrollableTab, Content, StyleProvider } from 'native-base'
 import moment from "moment/min/moment-with-locales";
+import getTheme from '../../../native-base-theme/components';
+import material from '../../../native-base-theme/variables/material';
 
 import TopBar from '../../Components/Bars/TopBar'
-import RequestsList from '../../Components/Lists/LoansList';
-import answerDialog from '../../Components/Modals/LoanDialog'
+import RequestsList from '../../Components/Lists/RequestsList';
+import answerDialog from '../../Components/Modals/AnswerDialog'
 import { withFirebase } from '../../Firebase/index'
+import showSnackbar from '../../Components/Modals/Snackbar'
 
 class Requests extends Component {
     constructor(props){
@@ -21,6 +24,7 @@ class Requests extends Component {
         .onSnapshot(doc => {
           if(doc.exists) {
             const data = doc.data();
+            console.log(data.place)
             this.setState({place: data.place})
             this.getKeyRequests()
             this.getResourceRequests()
@@ -48,7 +52,7 @@ class Requests extends Component {
             })
             this.setState({keys: keys})
         }, error => {
-            //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -64,7 +68,7 @@ class Requests extends Component {
             })
             this.setState({resources: resources})
         }, error => {
-            //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -134,7 +138,7 @@ class Requests extends Component {
                     })
             })
             .catch(error => {
-                console.log(error)
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
     }
 
@@ -185,11 +189,11 @@ class Requests extends Component {
                         this.deleteResourceRequest(request)
                     })
                     .catch(error => {
-                        //Snackbar deu errado
+                        showSnackbar('Algo deu errado. Tente novamente.', 'OK')
                     })
             })
             .catch(error => {
-                //Snackbar deu errado
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
     }
 
@@ -200,25 +204,20 @@ class Requests extends Component {
     
     render() {
         return (
-            <Container>
-                <TopBar title="Solicitações"
-                        back={this.goBack}
-                        hasTabs/>
-                <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
-                    <Tab heading={"Chaves"}>
-                        <Content>
-                            <RequestsList requests={this.state.keys}
-                                          action={this.answerRequest}/>  
-                        </Content>
-                    </Tab>
-                    <Tab heading={"Recursos"}>
-                        <Content>
-                            <RequestsList requests={this.state.resources}
-                                          action={this.answerRequest}/>
-                        </Content>
-                    </Tab>
-                </Tabs>
-            </Container>
+            <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#006CB4' }}/>}>
+                <Tab heading={"Chaves"}>
+                    <Content>
+                        <RequestsList requests={this.state.keys}
+                                    action={this.answerRequest}/>  
+                    </Content>
+                </Tab>
+                <Tab heading={"Recursos"}>
+                    <Content>
+                        <RequestsList requests={this.state.resources}
+                                    action={this.answerRequest}/>
+                    </Content>
+                </Tab>
+            </Tabs>
         )
     }
 }

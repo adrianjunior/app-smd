@@ -11,7 +11,7 @@ const loginForm = props => {
             </Item>
             <Item inlineLabel last>
                 <Label>Senha</Label>
-                <Input value={props.password} onChangeText={props.onChangePassword}/>
+                <Input secureTextEntry={true} value={props.password} onChangeText={props.onChangePassword}/>
             </Item>
             <Button block disabled={props.disabled} onPress={props.login}>
               <Text>Entrar</Text>

@@ -3,6 +3,8 @@ import moment from "moment/min/moment-with-locales";
 
 import RoomsList from '../../Components/Lists/RoomsList'
 import { withFirebase } from '../../Firebase/index';
+import showSnackbar from '../../Components/Modals/Snackbar'
+import Loader from '../../Components/Loaders/Loader'
 
 class Rooms extends Component {
     constructor(props){
@@ -12,7 +14,9 @@ class Rooms extends Component {
     state = {
         user: 0,
         active: 0,
-        rooms: []
+        rooms: [],
+        isLoading: false,
+        loadingText: ''
     }
 
     componentDidMount() {
@@ -34,8 +38,8 @@ class Rooms extends Component {
                                              tuesdayLessons: [],
                                              wednesdayLessons: [],
                                              thursdayLessons: [],
-                                             FridayLessons: [],
-                                             SaturdayLessons: [],}
+                                             fridayLessons: [],
+                                             saturdayLessons: [],}
                 });
                 this.props.firebase.getLessons()
                     .onSnapshot(querySnapshot => {
@@ -62,19 +66,19 @@ class Rooms extends Component {
                                     this.rooms[data.room].thursdayLessons.push({id, ...data})
                                     break;
                                 case 'Sexta-feira':
-                                    this.rooms[data.room].FridayLessons.push({id, ...data})
+                                    this.rooms[data.room].fridayLessons.push({id, ...data})
                                     break;
                                 case 'Sábado':
-                                    this.rooms[data.room].SaturdayLessons.push({id, ...data})
+                                    this.rooms[data.room].saturdayLessons.push({id, ...data})
                                     break;
                             }
                         });
-                        this.setState({rooms: this.rooms})
+                        this.setState({rooms: this.rooms, isLoading: false, loadingText: ''})
                 }, error => {
-                    this.setState({ error });
+                    this.setState({isLoading: false, loadingText: ''})
                 })
             }, error => {
-                this.setState({ error });
+                this.setState({isLoading: false, loadingText: ''})
             })
     }
 
@@ -96,9 +100,15 @@ class Rooms extends Component {
     }
 
     render() {
-        return (
-            <RoomsList rooms={this.state.rooms} go={this.props.go}/>
-        )
+        let content = null
+
+        if(!this.state.isLoading) {
+            content = <RoomsList rooms={this.state.rooms} go={this.props.go}/>
+        } else {
+            content = <Loader text={this.state.loadingText}/>
+        }
+
+        return content
     }
 }
 

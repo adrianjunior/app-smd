@@ -7,6 +7,7 @@ import ResourcesList from '../../Components/Lists/ResourcesList'
 import loanDialog from '../../Components/Modals/LoanDialog'
 import loginDialog from '../../Components/Modals/LoginDialog'
 import { withFirebase } from '../../Firebase/index'
+import showSnackbar from '../../Components/Modals/Snackbar'
 
 class Resources extends Component {
     constructor(props){
@@ -40,7 +41,7 @@ class Resources extends Component {
                 });
                 this.setState({resources: resources})
         }, error => {
-            this.setState({ error });
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -89,7 +90,8 @@ class Resources extends Component {
             this.setState({resourcePlace: resource.place})
             this.props.firebase.addResourceRequest(request, resource.place)
             .then(request => {
-                this.setState({isWaiting: true, requestId: request.id, target: target})
+                this.setState({requestId: request.id, target: target})
+                this.props.loading('Aguardando Resposta...', this.cancelRequest, target)
                 this.checkRequestAnswered(target)
             })
         } else if (target == 1){
@@ -97,7 +99,8 @@ class Resources extends Component {
             request.loanId = resource.loanId
             this.props.firebase.addResourceRequestToUser(request, resource.userId)
             .then(request => {
-                this.setState({isWaiting: true, requestId: request.id, target: target})
+                this.setState({requestId: request.id, target: target})
+                this.props.loading('Aguardando Resposta...', this.cancelRequest, target)
                 this.checkRequestAnswered(target)
             })
         }
@@ -107,13 +110,15 @@ class Resources extends Component {
         if(target == 0) {
             this.props.firebase.deleteResourceRequest(this.state.requestId, this.state.resourcePlace)
             .then(() => {
-                this.setState({isWaiting: false, requestId: false, target: null, resourceUserId: null})
+                this.setState({ requestId: false, target: null, resourcePlace: null})
+                this.props.cancelLoading()
                 this.requestListener()
             })
         } else if (target == 1){
             this.props.firebase.deleteResourceRequestToUser(this.state.requestId, this.state.resourceUserId)
             .then(() => {
-                this.setState({isWaiting: false, requestId: false, target: null, resourceUserId: null})
+                this.setState({requestId: false, target: null, resourceUserId: null})
+                this.props.cancelLoading()
                 this.requestListener()
             })
         }
@@ -124,7 +129,8 @@ class Resources extends Component {
             this.requestListener = this.props.firebase.getResourceRequest(this.state.requestId, this.state.resourcePlace)
             .onSnapshot(querySnapshot => {
                 if(!querySnapshot.exists) {
-                    this.setState({isWaiting: false, requestId: false, resourcePlace: null})
+                    this.setState({requestId: false, resourcePlace: null})
+                    this.props.cancelLoading()
                     this.requestListener()
                     //Resposta da solicitação
                 }
@@ -133,7 +139,8 @@ class Resources extends Component {
             this.requestListener = this.props.firebase.getResourceRequestToUser(this.state.requestId, this.state.resourceUserId)
             .onSnapshot(querySnapshot => {
                 if(!querySnapshot.exists) {
-                    this.setState({isWaiting: false, requestId: false, resourceUserId: null})
+                    this.setState({requestId: false, resourceUserId: null})
+                    this.props.cancelLoading()
                     this.requestListener()
                     //Resposta da solicitação
                 }
@@ -170,18 +177,10 @@ class Resources extends Component {
             ))
         }
 
-        if(!this.state.isWaiting) {
-            if(placesTabs.length > 0){
-                content =   <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
-                                {placesTabs}
-                            </Tabs>
-            }
-        } else {
-            content =   <>
-                            <Spinner/>
-                            <Text>Esperando Confirmação</Text>
-                            <Button onPress={() => this.cancelRequest(this.state.target)} danger><Text> Cancelar Solicitação </Text></Button>
-                        </>
+        if(placesTabs.length > 0){
+            content =   <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#006CB4' }}/>}>
+                            {placesTabs}
+                        </Tabs>
         }
 
         return (

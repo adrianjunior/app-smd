@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Content } from 'native-base'
+import { Container, Content, StyleProvider } from 'native-base'
 import moment from "moment/min/moment-with-locales";
+import getTheme from '../../../native-base-theme/components';
+import material from '../../../native-base-theme/variables/material';
 
 import TopBar from '../../Components/Bars/TopBar'
 import RequestsList from '../../Components/Lists/RequestsList'
 import answerDialog from '../../Components/Modals/AnswerDialog'
 import { withFirebase } from '../../Firebase/index'
+import showSnackbar from '../../Components/Modals/Snackbar'
 
 class Swap extends Component {
     constructor(props){
@@ -40,10 +43,10 @@ class Swap extends Component {
                     });
                     this.setState({requests: requests})
                 }, error => {
-                    this.setState({ error });
+                    showSnackbar('Algo deu errado. Tente novamente.', 'OK')
                 })
             }, error => {
-                this.setState({ error });
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
         }
     }
@@ -118,9 +121,12 @@ class Swap extends Component {
                 }
                 this.props.firebase
                     .swapKey(now, key, request.id, this.state.user.id)
+                    .then(() => {
+                        showSnackbar('Chave repassada com sucesso.', 'OK')
+                    })
             })
             .catch(error => {
-                //Snackbar deu errado
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
     }
 
@@ -164,9 +170,12 @@ class Swap extends Component {
                 }
                 this.props.firebase
                     .swapResource(now, resource, request.id, this.state.user.id)
+                    .then(() => {
+                        showSnackbar('Recurso repassado com sucesso.', 'OK')
+                    })
             })
             .catch(error => {
-                //Snackbar deu errado
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
     }
 
@@ -183,13 +192,15 @@ class Swap extends Component {
     
     render() {
         return (
-            <Container>
-                <TopBar title="Solicitações"
-                        back={this.goBack}/>
-                <Content>
-                    <RequestsList requests={this.state.requests} action={this.answerRequest}/>
-                </Content>
-            </Container>
+            <StyleProvider style={getTheme(material)}>
+                <Container>
+                    <TopBar title="Solicitações"
+                            back={this.goBack}/>
+                    <Content>
+                        <RequestsList requests={this.state.requests} action={this.answerRequest}/>
+                    </Content>
+                </Container>
+            </StyleProvider>
         )
     }
 }

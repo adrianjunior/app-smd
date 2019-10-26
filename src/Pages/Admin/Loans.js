@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Tabs, Tab, ScrollableTab, Content } from 'native-base'
+import { Container, Tabs, Tab, ScrollableTab, Content, StyleProvider, Toast } from 'native-base'
 import moment from "moment/min/moment-with-locales";
+import getTheme from '../../../native-base-theme/components';
+import material from '../../../native-base-theme/variables/material';
 
 import TopBar from '../../Components/Bars/TopBar'
 import LoansList from '../../Components/Lists/LoansList';
 import loanDialog from '../../Components/Modals/LoanDialog'
 import { withFirebase } from '../../Firebase/index'
+import showSnackbar from '../../Components/Modals/Snackbar'
 
 class LoanHistory extends Component {
     constructor(props){
@@ -32,32 +35,28 @@ class LoanHistory extends Component {
         this.listener()
     }
 
-    goBack = () => {
-        this.props.navigation.goBack()
-    }
-
     getKeyLoans = () => {
         this.props.firebase
         .getKeyLoans()
         .onSnapshot(querySnapshot => {
             const keys = []
+            const active = []
             querySnapshot.forEach(doc => {
                 const id = doc.id
                 const data = doc.data()
-                if(data.status === "false") {
-                    data.status = false
-                }
-                if(data.status === "true") {
-                    data.status = true
-                }
                 if(keys[data.date] == undefined){
                     keys[data.date] = []
                 }
-                keys[data.date].push({id, ...data})
+                if(data.devolutionTime !== '') {
+                    keys[data.date].push({id, ...data})
+                } else {
+                    active.push({id, ...data})
+                }
+                
             })
-            this.setState({keys: keys})
+            this.setState({keys: keys, activeKeys: active})
         }, error => {
-            //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -66,23 +65,22 @@ class LoanHistory extends Component {
         .getResourceLoans()
         .onSnapshot(querySnapshot => {
             const resources = []
+            const active = []
             querySnapshot.forEach(doc => {
                 const id = doc.id
                 const data = doc.data()
-                if(data.status === "false") {
-                    data.status = false
-                }
-                if(data.status === "true") {
-                    data.status = true
-                }
                 if(resources[data.date] == undefined){
                     resources[data.date] = []
                 }
-                resources[data.date].push({id, ...data})
+                if(data.devolutionTime !== '') {
+                    resources[data.date].push({id, ...data})
+                } else {
+                    active.push({id, ...data})
+                }
             })
-            this.setState({resources: resources})
+            this.setState({resources: resources, activeResources: active})
         }, error => {
-            //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -119,11 +117,11 @@ class LoanHistory extends Component {
         //Alterar o devolutionTime do Loan
             this.props.firebase.updateKeyLoan(loan.id, now)
             .then(() => {
-                //Snackbar deu certo
+                showSnackbar('Chave devolvida com sucesso!.', 'OK')
             })
         })
         .catch(error => {
-        //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
       }
     
@@ -136,35 +134,32 @@ class LoanHistory extends Component {
         //Alterar o devolutionTime do Loan
             this.props.firebase.updateResourceLoan(loan.id, now)
             .then(() => {
-                //Snackbar deu certo
+                showSnackbar('Recurso devolvido com sucesso!.', 'OK')
             })
         })
         .catch(error => {
-        //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
       }
     
     render() {
         return (
-            <Container>
-                <TopBar title="Empréstimos"
-                        back={this.goBack}
-                        hasTabs/>
-                <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#FFF' }}/>}>
-                    <Tab heading={"Chaves"}>
-                        <Content>
-                            <LoansList loanDates={this.state.keys}
-                                       action={this.answerLoan}/>  
-                        </Content>
-                    </Tab>
-                    <Tab heading={"Recursos"}>
-                        <Content>
-                            <LoansList loanDates={this.state.resources}
-                                       action={this.answerLoan}/>
-                        </Content>
-                    </Tab>
-                </Tabs>
-            </Container>
+            <Tabs renderTabBar={()=> <ScrollableTab style={{ backgroundColor: '#006CB4' }}/>}>
+                <Tab heading={"Chaves"}>
+                    <Content>
+                        <LoansList  loanDates={this.state.keys}
+                                    action={this.answerLoan}
+                                    activeLoans={this.state.activeKeys}/>  
+                    </Content>
+                </Tab>
+                <Tab heading={"Recursos"}>
+                    <Content>
+                        <LoansList  loanDates={this.state.resources}
+                                    action={this.answerLoan}
+                                    activeLoans={this.state.activeResources}/>
+                    </Content>
+                </Tab>
+            </Tabs>
         )
     }
 }

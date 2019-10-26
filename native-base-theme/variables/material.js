@@ -157,27 +157,27 @@ export default {
 
   // Footer
   footerHeight: 55,
-  footerDefaultBg: '#FFF',
+  footerDefaultBg: '#006CB4',
   footerPaddingBottom: 0,
 
   // FooterTab
-  tabBarTextColor: '#5bbdff',
+  tabBarTextColor: '#EEE',
   tabBarTextSize: 11,
-  activeTab: '#006CB4',
-  sTabBarActiveTextColor: '#007aff',
-  tabBarActiveTextColor: '#006CB4',
-  tabActiveBgColor: '#FFF',
+  activeTab: '#F18C25',
+  sTabBarActiveTextColor: '#F18C25',
+  tabBarActiveTextColor: '#F18C25',
+  tabActiveBgColor: '#006CB4',
 
   // Header
-  toolbarBtnColor: '#006CB4',
-  toolbarDefaultBg: '#fff',
+  toolbarBtnColor: '#fff',
+  toolbarDefaultBg: '#006CB4',
   toolbarHeight: 56,
   toolbarSearchIconSize: 23,
-  toolbarInputColor: '#006CB4',
+  toolbarInputColor: '#fff',
   searchBarHeight: platform === PLATFORM.IOS ? 30 : 40,
   searchBarInputHeight: platform === PLATFORM.IOS ? 40 : 50,
-  toolbarBtnTextColor: '#006CB4',
-  toolbarDefaultBorder: '#fff',
+  toolbarBtnTextColor: '#fff',
+  toolbarDefaultBorder: '#006CB4',
   iosStatusbar: 'light-content',
   get statusBarColor() {
     return color(this.toolbarDefaultBg)
@@ -250,11 +250,11 @@ export default {
   inverseSpinnerColor: '#1A191B',
 
   // Tab
-  tabDefaultBg: '#fff',
-  topTabBarTextColor: '#006CB4',
-  topTabBarActiveTextColor: '#006CB4',
-  topTabBarBorderColor: '#006CB4',
-  topTabBarActiveBorderColor: '#006CB4',
+  tabDefaultBg: '#006CB4',
+  topTabBarTextColor: '#fff',
+  topTabBarActiveTextColor: '#fff',
+  topTabBarBorderColor: '#fff',
+  topTabBarActiveBorderColor: '#fff',
 
   // Tabs
   tabBgColor: '#F8F8F8',
@@ -272,8 +272,8 @@ export default {
   titleFontfamily: 'Roboto',
   titleFontSize: 19,
   subTitleFontSize: 14,
-  subtitleColor: '#006CB4',
-  titleFontColor: '#006CB4',
+  subtitleColor: '#fff',
+  titleFontColor: '#fff',
 
   // Other
   borderRadiusBase: 2,

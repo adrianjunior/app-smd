@@ -2,6 +2,7 @@ import React from 'react'
 import { FooterTab, Button, Icon, Text, Footer } from 'native-base'
 
 const bottomBar = props => {
+
     return(
         <Footer>
             <FooterTab>

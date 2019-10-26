@@ -8,7 +8,9 @@ import Room from './Pages/Room';
 import RoomsFilter from './Pages/Filters/RoomsFilter';
 import Swap from './Pages/User/Swap';
 import Loans from './Pages/Admin/Loans';
-import Requests from './Pages/Admin/Requests'
+import Requests from './Pages/Admin/Requests';
+import AdminKeys from './Pages/Admin/AdminKeys';
+import AdminResources from './Pages/Admin/AdminResources';
 
 const Routes = createAppContainer(
     createStackNavigator({
@@ -19,7 +21,9 @@ const Routes = createAppContainer(
         RoomsFilter,
         Swap,
         Loans,
-        Requests
+        Requests,
+        AdminKeys,
+        AdminResources
     }, {
         headerMode: 'none',
         navigationOptions: {headerVisible: false,}

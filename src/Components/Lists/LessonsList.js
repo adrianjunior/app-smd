@@ -1,5 +1,16 @@
 import React from 'react'
+import { StyleSheet } from 'react-native'
 import { List, ListItem, Text, Body } from 'native-base'
+
+const styles = StyleSheet.create({
+    title: {
+        color: '#F18C25',
+        fontSize: 18,
+    },
+    bold: {
+        fontWeight: 'bold',
+    }
+  });
 
 const lessonsList = props => {
     let mondayLessons = []
@@ -15,7 +26,7 @@ const lessonsList = props => {
                 <ListItem>
                     <Body>
                         <Text>
-                            {lesson.startTime} às {lesson.endTime} - {lesson.name}
+                            {lesson.startTime} às {lesson.endTime} -  <Text style={styles.bold}>{lesson.name}</Text>
                         </Text>
                         <Text>
                             Professor(es): {lesson.teacher}
@@ -32,7 +43,7 @@ const lessonsList = props => {
                 <ListItem>
                     <Body>
                         <Text>
-                            {lesson.startTime} às {lesson.endTime} - {lesson.name}
+                            {lesson.startTime} às {lesson.endTime} - <Text style={styles.bold}>{lesson.name}</Text>
                         </Text>
                         <Text>
                             Professor(es): {lesson.teacher}
@@ -49,7 +60,7 @@ const lessonsList = props => {
                 <ListItem>
                     <Body>
                         <Text>
-                            {lesson.startTime} às {lesson.endTime} - {lesson.name}
+                            {lesson.startTime} às {lesson.endTime} - <Text style={styles.bold}>{lesson.name}</Text>
                         </Text>
                         <Text>
                             Professor(es): {lesson.teacher}
@@ -66,7 +77,7 @@ const lessonsList = props => {
                 <ListItem>
                     <Body>
                         <Text>
-                            {lesson.startTime} às {lesson.endTime} - {lesson.name}
+                            {lesson.startTime} às {lesson.endTime} - <Text style={styles.bold}>{lesson.name}</Text>
                         </Text>
                         <Text>
                             Professor(es): {lesson.teacher}
@@ -83,7 +94,7 @@ const lessonsList = props => {
                 <ListItem>
                     <Body>
                         <Text>
-                            {lesson.startTime} às {lesson.endTime} - {lesson.name}
+                            {lesson.startTime} às {lesson.endTime} - <Text style={styles.bold}>{lesson.name}</Text>
                         </Text>
                         <Text>
                             Professor(es): {lesson.teacher}
@@ -100,7 +111,7 @@ const lessonsList = props => {
                 <ListItem>
                     <Body>
                         <Text>
-                            {lesson.startTime} às {lesson.endTime} - {lesson.name}
+                            {lesson.startTime} às {lesson.endTime} - <Text style={styles.bold}>{lesson.name}</Text>
                         </Text>
                         <Text>
                             Professor(es): {lesson.teacher}

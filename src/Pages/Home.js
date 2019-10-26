@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, Content, Spinner, Text, ActionSheet, StyleProvider } from 'native-base';
+import { Container, Content, Spinner, Text, ActionSheet, StyleProvider, Toast } from 'native-base';
 import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/material';
  
@@ -9,8 +9,14 @@ import Rooms from './HomeTabs/Rooms'
 import Keys from './HomeTabs/Keys'
 import Resources from './HomeTabs/Resources'
 import Login from './HomeTabs/Login'
+import Loans from './Admin/Loans'
+import Requests from './Admin/Requests'
 import BottomBar from '../Components/Bars/BottomBar'
+import BottomBarAdmin from '../Components/Bars/BottomBarAdmin'
 import confirmationDialog from '../Components/Modals/ConfirmationDialog'
+import showSnackbar from '../Components/Modals/Snackbar'
+import Loader from '../Components/Loaders/Loader'
+import LoaderWithCancel from '../Components/Loaders/LoaderWithCancel'
 
 const INITIAL_STATE = {
     user: 0,
@@ -23,19 +29,19 @@ const INITIAL_STATE = {
 };
 
 const USER_BUTTONS = [
-    { text: "Solicitações de Chave/Recurso", icon: "swap", page: "Swap" },
-    { text: "Alterar Senha", icon: "lock", page: "Password" }, 
-    { text: "Sair", icon: "log-out", page: "Logout" },
-    { text: "Cancelar", icon: "close" }
+    { text: "Solicitações de Chave/Recurso", icon: "swap", page: "Swap", iconColor: "#006CB4" },
+    { text: "Alterar Senha", icon: "lock", page: "Password", iconColor: "#006CB4" }, 
+    { text: "Sair", icon: "log-out", page: "Logout", iconColor: "#d9534f" },
+    { text: "Cancelar", icon: "close", iconColor: "#006CB4" }
   ];
 const USER_CANCEL_INDEX = 3;
 
 const ADMIN_BUTTONS = [
-    { text: "Empréstimos", icon: "list-box", page: "Loans" },
-    { text: "Solicitações", icon: "text", page: "Requests" },
-    { text: "Alterar Senha", icon: "lock", page: "Password" }, 
-    { text: "Sair", icon: "log-out", page: "Logout" },
-    { text: "Cancelar", icon: "close" }
+    { text: "Chaves", icon: "key", page: "AdminKeys", iconColor: "#006CB4" },
+    { text: "Recursos", icon: "camera", page: "AdminResources", iconColor: "#006CB4" },
+    { text: "Alterar Senha", icon: "lock", page: "Password", iconColor: "#006CB4" }, 
+    { text: "Sair", icon: "log-out", page: "Logout", iconColor: "#d9534f" },
+    { text: "Cancelar", icon: "close", iconColor: "#006CB4" }
   ];
 const ADMIN_CANCEL_INDEX = 4;
 
@@ -83,17 +89,17 @@ class Home extends Component {
 
     onLogin = () => {
         const {email, password} = this.state
-        this.setState({isLoading: true, loadingText: 'Logando...'})
+        this.callLoading('Entrando...', null, null)
 
         this.props.firebase
           .signIn(email, password)
           .then(() => {
             this.checkUserType()
+            showSnackbar('Você entrou com sucesso!', 'OK')
           })
           .catch(error => {
-            this.setState({ isLoading: false, loadingText: 'Logando...' });
-            console.log(error)  
-            //Snackbar deu errado
+            this.stopLoading()
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
           });
     }
 
@@ -110,7 +116,11 @@ class Home extends Component {
         this.props.firebase.signOut()
         .then(() => {
             this.setState({user: 0, active: 0})
-            //Adicionar uma Snackbar
+            console.log('teste')
+            showSnackbar('Você saiu da conta com sucesso!', 'OK')
+        })
+        .catch(error => {
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK') //Traduzir o erro
         })
     }
 
@@ -147,7 +157,7 @@ class Home extends Component {
                         })
                 }
             }, error => {
-                console.log(error)
+                showSnackbar('Algo deu errado. Tente novamente.', 'OK')
             })
     }
 
@@ -165,10 +175,10 @@ class Home extends Component {
         this.props.firebase
         .resetPassword(this.state.userInfo.email)
         .then(() => {
-            //Snackbar deu certo
+            showSnackbar('Email enviado. Cheque seu email.', 'OK')
         })
         .catch(error => {
-            //Snackbar deu errado
+            showSnackbar('Algo deu errado. Tente novamente.', 'OK')
         })
     }
 
@@ -199,6 +209,20 @@ class Home extends Component {
         }
     }
 
+    callLoading = (loadingText, cancel, target) => {
+        this.setState({ isLoading: true,
+                        loadingText: loadingText,
+                        cancel: cancel,
+                        target: target })
+    }
+
+    stopLoading = () => {
+        this.setState({ isLoading: false,
+                        loadingText: '',
+                        cancel: '',
+                        target: '' })
+    }
+
     render() {
         let topBar = null
         let content = null
@@ -206,22 +230,44 @@ class Home extends Component {
         console.log(this.state.active)
         switch(this.state.active) {
             case 0:
-                topBar = <TopBar title="Salas"/>
-                content = <Rooms go={this.goToPage}/>
+                if(this.state.user <= 1) {
+                    topBar = <TopBar title="Salas"/>
+                    content = <Rooms go={this.goToPage}/>
+                } else {
+                    topBar = <TopBar title="Pedidos de Empréstimo"
+                                     hasTabs/>
+                    content = <Requests/>
+                }
                 active = [true, false, false, false]
                 break;
             case 1:
-                topBar = <TopBar title="Chaves" hasTabs/>
-                content = <Keys user={this.state.user}
-                                userInfo={this.state.userInfo}
-                                changePage={this.changePage}/>
+                if(this.state.user <= 1) {
+                    topBar = <TopBar title="Chaves" hasTabs/>
+                    content = <Keys user={this.state.user}
+                                    userInfo={this.state.userInfo}
+                                    changePage={this.changePage}
+                                    loading={this.callLoading}
+                                    cancelLoading={this.stopLoading}/>
+                } else {
+                    topBar = <TopBar title="Empréstimos"
+                                     hasTabs/>
+                    content = <Loans/>
+                }
                 active = [false, true, false, false]
                 break;
             case 2:
-                topBar = <TopBar title="Recursos" hasTabs/>
-                content = <Resources user={this.state.user}
-                                     userInfo={this.state.userInfo}
-                                     changePage={this.changePage}/>
+                if(this.state.user <= 1) {
+                    topBar = <TopBar title="Recursos" hasTabs/>
+                    content = <Resources user={this.state.user}
+                                         userInfo={this.state.userInfo}
+                                         changePage={this.changePage}
+                                         loading={this.callLoading}
+                                         cancelLoading={this.stopLoading}/>
+                } else {
+                    topBar = <TopBar title="Salas"/>
+                    content = <Rooms go={this.goToPage}/>
+                }
+                
                 active = [false, false, true, false]
                 break;
             case 3:
@@ -242,21 +288,32 @@ class Home extends Component {
         let container = null
 
         if(!this.state.isLoading) {
-            container = <Container>
-                            {topBar}
-                            <Content>{content}</Content>
-                            <BottomBar  action={this.changePage}
-                                        active={active}
-                                        user={this.state.user}/>
-                            <ActionSheet ref={(c) => { this.actionSheet = c; }} />
-                        </Container>
+            if(this.state.user <= 1) {
+                container = <Container>
+                                {topBar}
+                                <Content>{content}</Content>
+                                <BottomBar  action={this.changePage}
+                                            active={active}
+                                            user={this.state.user}/>
+                                <ActionSheet style={{backgroundColor: '#212121'}} ref={(c) => { this.actionSheet = c; }} />
+                            </Container>
+            } else {
+                container = <Container>
+                                {topBar}
+                                <Content>{content}</Content>
+                                <BottomBarAdmin action={this.changePage}
+                                                active={active}
+                                                user={this.state.user}/>
+                                <ActionSheet style={{backgroundColor: '#212121'}} ref={(c) => { this.actionSheet = c; }} />
+                            </Container>
+            }
+            
         } else {
-            container = <Container>
-                            <Content>
-                                <Spinner/>
-                                <Text>{this.state.loadingText}</Text>
-                            </Content>
-                        </Container>
+            if(this.state.cancel == null) {
+                container = <Loader text={this.state.loadingText}/>
+            } else {
+                container = <LoaderWithCancel text={this.state.loadingText} cancel={this.state.cancel} target={this.state.target}/>
+            }
         }
 
         return <StyleProvider style={getTheme(material)}>{container}</StyleProvider>
