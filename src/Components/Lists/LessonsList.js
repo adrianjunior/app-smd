@@ -2,6 +2,8 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 import { List, ListItem, Text, Body } from 'native-base'
 
+/* Componente que recebe as aulas de cada dia e as coloca em arrays para serem carregados em listas */
+
 const styles = StyleSheet.create({
     title: {
         color: '#F18C25',

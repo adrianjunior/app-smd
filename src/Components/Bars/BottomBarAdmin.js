@@ -1,6 +1,8 @@
 import React from 'react'
 import { FooterTab, Button, Icon, Text, Footer } from 'native-base'
 
+/* Barra de baixo utilizado no perfil de admin */
+
 const bottomBarAdmin = props => {
 
     return(

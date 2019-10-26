@@ -1,6 +1,7 @@
 import React from 'react'
-
 import { Form, Input, Item, Label, Button, Text } from 'native-base';
+
+/* Falta o 'Recuperar Senha' */
 
 const loginForm = props => {
     return(

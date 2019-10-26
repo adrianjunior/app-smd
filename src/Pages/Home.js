@@ -28,6 +28,7 @@ const INITIAL_STATE = {
     loadingText: ''
 };
 
+// BOTÕES DA ACTION SHEET DO USUÁRIO COMUM
 const USER_BUTTONS = [
     { text: "Solicitações de Chave/Recurso", icon: "swap", page: "Swap", iconColor: "#006CB4" },
     { text: "Alterar Senha", icon: "lock", page: "Password", iconColor: "#006CB4" }, 
@@ -36,6 +37,7 @@ const USER_BUTTONS = [
   ];
 const USER_CANCEL_INDEX = 3;
 
+// BOTÕES DA ACTION SHEET DO ADMIN
 const ADMIN_BUTTONS = [
     { text: "Chaves", icon: "key", page: "AdminKeys", iconColor: "#006CB4" },
     { text: "Recursos", icon: "camera", page: "AdminResources", iconColor: "#006CB4" },
@@ -53,12 +55,14 @@ class Home extends Component {
     }
 
     componentDidMount(){
+        // CHECA O TIPO DE USUÁRIO
         if(this.props.firebase.isLogged()){
             this.checkUserType()
         }
     }
 
     changePage = (page) => {
+        // TROCA DE PÁGINA
         if(this.state.active != page) {
             switch(page) {
                 case 0:
@@ -84,6 +88,7 @@ class Home extends Component {
     }
 
     goToPage = (page, params) => {
+        // NAVEGAÇÃO DE PÁGINA
         this.props.navigation.navigate(page, params);
     }
 
@@ -104,7 +109,6 @@ class Home extends Component {
     }
 
     onLogout = () => {
-        //Adicionar um alert
         confirmationDialog('Sair', 
                     'Tem certeza que deseja deslogar da aplicação?',
                     'Sair',
